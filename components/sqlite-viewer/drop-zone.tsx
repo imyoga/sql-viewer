@@ -14,7 +14,13 @@ export function DropZone({ onFile, loading }: DropZoneProps) {
 
   const handleFile = useCallback(
     (file: File) => {
-      if (file.name.endsWith(".sqlite") || file.name.endsWith(".db") || file.name.endsWith(".sqlite3")) {
+      const name = file.name.toLowerCase();
+      if (
+        name.endsWith(".sqlite") ||
+        name.endsWith(".db") ||
+        name.endsWith(".sqlite3") ||
+        name.endsWith(".parquet")
+      ) {
         onFile(file);
       }
     },
@@ -63,7 +69,7 @@ export function DropZone({ onFile, loading }: DropZoneProps) {
         <input
           ref={inputRef}
           type="file"
-          accept=".sqlite,.db,.sqlite3"
+          accept=".sqlite,.db,.sqlite3,.parquet"
           className="hidden"
           onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
         />
@@ -80,14 +86,14 @@ export function DropZone({ onFile, loading }: DropZoneProps) {
             </div>
             <div className="text-center">
               <p className="text-sm font-medium text-foreground">
-                {dragging ? "Drop it here" : "Drop your SQLite file"}
+                {dragging ? "Drop it here" : "Drop your database file"}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
                 or <span className="text-primary">click to browse</span>
               </p>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              {[".sqlite", ".db", ".sqlite3"].map((ext) => (
+              {[".sqlite", ".db", ".sqlite3", ".parquet"].map((ext) => (
                 <span
                   key={ext}
                   className="px-2 py-0.5 rounded-md bg-secondary border border-border text-xs font-mono text-muted-foreground"
@@ -102,7 +108,8 @@ export function DropZone({ onFile, loading }: DropZoneProps) {
 
       <p className="mt-8 text-xs text-muted-foreground text-center max-w-sm leading-relaxed">
         Files are processed entirely in your browser using{" "}
-        <span className="text-primary font-mono">sql.js</span> (SQLite compiled to WebAssembly) running inside{" "}
+        <span className="text-primary font-mono">sql.js</span> and{" "}
+        <span className="text-primary font-mono">hyparquet</span> running inside{" "}
         <span className="text-primary font-mono">Web Workers</span>. Nothing is uploaded to any server.
       </p>
     </div>

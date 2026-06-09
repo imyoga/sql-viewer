@@ -124,6 +124,28 @@ self.onmessage = async (event) => {
         break;
       }
 
+      // Parquet (or any tabular) data: build an in-memory SQLite DB from pre-parsed rows
+      case "init_from_data": {
+        const { tableName, columns, rows } = event.data;
+        const SQL = await initSqlJs({ locateFile: () => "/sql-wasm.wasm" });
+        db = new SQL.Database();
+
+        const colDefs = columns.map((c) => `"${c.name}" ${c.type}`).join(", ");
+        db.run(`CREATE TABLE "${tableName}" (${colDefs})`);
+
+        if (rows.length > 0) {
+          const placeholders = columns.map(() => "?").join(", ");
+          const stmt = db.prepare(`INSERT INTO "${tableName}" VALUES (${placeholders})`);
+          for (const row of rows) {
+            stmt.run(row);
+          }
+          stmt.free();
+        }
+
+        self.postMessage({ id, ok: true, data: { tableNames: [tableName] } });
+        break;
+      }
+
       default:
         self.postMessage({ id, ok: false, error: `Unknown command: ${type}` });
     }

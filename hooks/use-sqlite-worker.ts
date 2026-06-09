@@ -2,6 +2,21 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 
+function mapParquetType(physicalType?: string): string {
+  switch (physicalType) {
+    case "BOOLEAN":
+    case "INT32":
+    case "INT64":
+    case "INT96":
+      return "INTEGER";
+    case "FLOAT":
+    case "DOUBLE":
+      return "REAL";
+    default:
+      return "TEXT";
+  }
+}
+
 // ─── Shared types (identical surface to use-sqlite.ts) ───────────────────────
 
 export interface ColumnInfo {
@@ -144,6 +159,58 @@ export function useSqliteWorker() {
     terminatePool();
 
     try {
+      // ── Parquet path ─────────────────────────────────────────────────────
+      if (file.name.toLowerCase().endsWith(".parquet")) {
+        const { parquetRead, parquetMetadata } = await import("hyparquet");
+        const buffer = await file.arrayBuffer();
+
+        const metadata = parquetMetadata(buffer);
+        // Leaf schema elements have a `type` property; group nodes do not
+        const leafFields = metadata.schema.filter((s) => s.type !== undefined);
+
+        const columns: ColumnInfo[] = leafFields.map((s, i) => ({
+          cid: i,
+          name: s.name,
+          type: mapParquetType(s.type as string | undefined),
+          notnull: 0,
+          dflt_value: null,
+          pk: 0,
+        }));
+
+        let parsedRows: Record<string, unknown>[] = [];
+        await parquetRead({
+          file: buffer,
+          onComplete: (rows) => {
+            parsedRows = rows as Record<string, unknown>[];
+          },
+        });
+
+        const serializedRows = parsedRows.map((row) =>
+          columns.map((col) => {
+            const val = row[col.name];
+            if (val === null || val === undefined) return null;
+            if (val instanceof Date) return val.toISOString();
+            if (typeof val === "bigint") return Number(val);
+            if (typeof val === "object") return JSON.stringify(val);
+            return val as string | number;
+          })
+        );
+
+        const tableName = file.name.replace(/\.parquet$/i, "");
+        const primary = getPrimary();
+        await primary.send({
+          type: "init_from_data",
+          tableName,
+          columns: columns.map((c) => ({ name: c.name, type: c.type })),
+          rows: serializedRows,
+        });
+
+        setTables([{ name: tableName, rowCount: parsedRows.length, columns }]);
+        setFileName(file.name);
+        return;
+      }
+
+      // ── SQLite path ───────────────────────────────────────────────────────
       const buffer = await file.arrayBuffer();
 
       // ① Init the primary worker — it opens the DB and returns all table names
@@ -211,7 +278,7 @@ export function useSqliteWorker() {
       setFileName(file.name);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to load SQLite file"
+        err instanceof Error ? err.message : "Failed to load file"
       );
     } finally {
       setLoading(false);

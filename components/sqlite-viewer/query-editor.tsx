@@ -11,7 +11,7 @@ interface QueryEditorProps {
 }
 
 function CellValue({ value }: { value: string | number | null | Uint8Array }) {
-  if (value === null) return <span className="text-muted-foreground/50 italic text-[11px]">NULL</span>;
+  if (value === null) return <span className="text-muted-foreground italic text-[11px]">NULL</span>;
   if (value instanceof Uint8Array)
     return <span className="text-chart-4 font-mono text-[11px]">BLOB({value.length}B)</span>;
   return <span>{String(value)}</span>;
@@ -115,7 +115,7 @@ export function QueryEditor({ onRun, tables }: QueryEditorProps) {
             <table className="w-full text-xs font-mono border-collapse">
               <thead className="sticky top-[33px] z-10 bg-table-header">
                 <tr>
-                  <th className="px-3 py-2.5 text-right text-muted-foreground/50 font-medium border-b border-border w-10">#</th>
+                  <th className="px-3 py-2.5 text-right text-muted-foreground font-medium border-b border-border w-10">#</th>
                   {(result as QueryResult).columns.map((col) => (
                     <th key={col} className="px-3 py-2.5 text-left font-medium text-muted-foreground border-b border-border whitespace-nowrap">
                       {col}
@@ -132,9 +132,9 @@ export function QueryEditor({ onRun, tables }: QueryEditorProps) {
                       ri % 2 === 1 && "bg-table-row-alt"
                     )}
                   >
-                    <td className="px-3 py-2 text-right text-muted-foreground/40 select-none tabular-nums">{ri + 1}</td>
+                    <td className="px-3 py-2 text-right text-muted-foreground select-none tabular-nums">{ri + 1}</td>
                     {row.map((cell, ci) => (
-                      <td key={ci} className="px-3 py-2 text-foreground/85 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
+                      <td key={ci} className="px-3 py-2 text-foreground max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
                         <CellValue value={cell} />
                       </td>
                     ))}

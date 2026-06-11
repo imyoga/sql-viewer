@@ -72,21 +72,21 @@ export function SchemaView({ tableInfo }: SchemaViewProps) {
                   {col.pk ? (
                     <CheckCircle2 className="w-3.5 h-3.5 text-primary inline" />
                   ) : (
-                    <span className="text-muted-foreground/30">—</span>
+                    <span className="text-muted-foreground">—</span>
                   )}
                 </td>
                 <td className="px-3 py-2.5 text-center border border-border/30">
                   {col.notnull ? (
                     <AlertCircle className="w-3.5 h-3.5 text-chart-5 inline" />
                   ) : (
-                    <span className="text-muted-foreground/30">—</span>
+                    <span className="text-muted-foreground">—</span>
                   )}
                 </td>
                 <td className="px-3 py-2.5 border border-border/30">
                   {col.dflt_value !== null ? (
                     <span className="text-chart-3">{col.dflt_value}</span>
                   ) : (
-                    <span className="text-muted-foreground/30">NULL</span>
+                    <span className="text-muted-foreground">NULL</span>
                   )}
                 </td>
               </tr>

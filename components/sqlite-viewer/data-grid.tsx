@@ -38,7 +38,7 @@ function TypeIcon({ type }: { type: string }) {
 
 function CellValue({ value }: { value: string | number | null | Uint8Array }) {
   if (value === null) {
-    return <span className="text-muted-foreground/50 italic text-[11px]">NULL</span>;
+    return <span className="text-muted-foreground italic text-[11px]">NULL</span>;
   }
   if (value instanceof Uint8Array) {
     return (
@@ -139,7 +139,7 @@ export function DataGrid({ tableName, tableInfo, onQuery }: DataGridProps) {
             <thead className="sticky top-0 z-10">
               <tr className="bg-table-header">
                 {/* Row number header */}
-                <th className="px-3 py-2.5 text-right text-muted-foreground/50 font-medium border-b border-border w-12 select-none">
+                <th className="px-3 py-2.5 text-right text-muted-foreground font-medium border-b border-border w-12 select-none">
                   #
                 </th>
                 {columns.map((col, i) => {
@@ -155,9 +155,9 @@ export function DataGrid({ tableName, tableInfo, onQuery }: DataGridProps) {
                         ) : (
                           <TypeIcon type={colInfo?.type ?? ""} />
                         )}
-                        <span className="text-foreground/90">{col}</span>
+                        <span className="text-foreground">{col}</span>
                         {colInfo?.type && (
-                          <span className="text-[10px] text-muted-foreground/60 font-normal">
+                          <span className="text-[10px] text-muted-foreground font-normal">
                             {colInfo.type}
                           </span>
                         )}
@@ -177,13 +177,13 @@ export function DataGrid({ tableName, tableInfo, onQuery }: DataGridProps) {
                   )}
                 >
                   {/* Row number */}
-                  <td className="px-3 py-2 text-right text-muted-foreground/40 select-none tabular-nums">
+                  <td className="px-3 py-2 text-right text-muted-foreground select-none tabular-nums">
                     {page * PAGE_SIZE + ri + 1}
                   </td>
                   {row.map((cell, ci) => (
                     <td
                       key={ci}
-                      className="px-3 py-2 text-foreground/85 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis"
+                      className="px-3 py-2 text-foreground max-w-xs whitespace-nowrap overflow-hidden text-ellipsis"
                     >
                       <CellValue value={cell} />
                     </td>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
-import { Database, Upload, FileArchive } from "lucide-react";
+import { Database, FileArchive } from "lucide-react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 interface DropZoneProps {
   onFile: (file: File) => void;
@@ -38,7 +39,11 @@ export function DropZone({ onFile, loading }: DropZoneProps) {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-8 relative">
+      <div className="absolute top-4 right-4">
+        <ModeToggle />
+      </div>
+
       {/* Header */}
       <div className="flex items-center gap-3 mb-12">
         <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center">

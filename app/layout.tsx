@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -35,14 +36,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background" style={{ colorScheme: "dark" }}>
+    <html lang="en" className="bg-background" suppressHydrationWarning>
       <head>
         {/* Start fetching the WASM binary immediately during HTML parse — before any JS runs */}
         <link rel="preload" href="/sql-wasm.wasm" as="fetch" type="application/wasm" crossOrigin="anonymous" />
         <link rel="preload" href="/sqlite-worker.js" as="script" />
       </head>
       <body className="font-sans antialiased">
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          {children}
+        </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

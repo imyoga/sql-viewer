@@ -162,6 +162,7 @@ export function useSqliteWorker() {
       // ── Parquet path ─────────────────────────────────────────────────────
       if (file.name.toLowerCase().endsWith(".parquet")) {
         const { parquetRead, parquetMetadata } = await import("hyparquet");
+        const { compressors } = await import("hyparquet-compressors");
         const buffer = await file.arrayBuffer();
 
         const metadata = parquetMetadata(buffer);
@@ -180,6 +181,7 @@ export function useSqliteWorker() {
         let parsedRows: Record<string, unknown>[] = [];
         await parquetRead({
           file: buffer,
+          compressors,
           onComplete: (rows) => {
             parsedRows = rows as Record<string, unknown>[];
           },

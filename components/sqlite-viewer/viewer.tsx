@@ -9,6 +9,7 @@ import { useSqliteWorker } from "@/hooks/use-sqlite-worker";
 import { DropZone } from "./drop-zone";
 import { Table2, AlignLeft, Code2, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ModeToggle } from "@/components/mode-toggle";
 
 type ViewMode = "data" | "schema" | "query";
 
@@ -82,16 +83,20 @@ export function SqliteViewer() {
 
           {activeTable && (
             <span className="ml-2 text-[11px] font-mono text-muted-foreground">
-              → <span className="text-foreground/70">{activeTable}</span>
+              → <span className="text-foreground">{activeTable}</span>
             </span>
           )}
+
+          <div className="ml-auto">
+            <ModeToggle />
+          </div>
         </div>
 
         {/* Error Banner */}
         {error && (
           <div className="mx-4 mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/30 flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 text-destructive-foreground shrink-0 mt-0.5" />
-            <p className="text-xs font-mono text-destructive-foreground">{error}</p>
+            <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+            <p className="text-xs font-mono text-destructive">{error}</p>
           </div>
         )}
 
@@ -104,7 +109,7 @@ export function SqliteViewer() {
             />
           ) : !activeTable ? (
             <div className="flex flex-col items-center justify-center h-full gap-3">
-              <Table2 className="w-10 h-10 text-muted-foreground/30" />
+              <Table2 className="w-10 h-10 text-muted-foreground/60" />
               <p className="text-sm text-muted-foreground">Select a table from the sidebar</p>
             </div>
           ) : viewMode === "data" && selectedTableInfo ? (
